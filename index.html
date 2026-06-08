@@ -1,9 +1,728 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Ficha Cliente</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Antropométrica - Evaluación Corporal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+  
+  * {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  body {
+    background-color: #2C5282;
+  }
+  
+  .page {
+    page-break-after: always;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  .page:last-child {
+    page-break-after: avoid;
+  }
+  
+  .measure-badge {
+    position: absolute;
+    background: white;
+    border: 2px solid #2C5282;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2C5282;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  
+  .measure-line {
+    position: absolute;
+    background: #2C5282;
+    height: 2px;
+  }
+  
+  .input-editable {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 8px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+  
+  .input-editable:focus {
+    outline: none;
+    border-color: #2C5282;
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+  }
+  
+  @media print {
+    body {
+      background: white;
+    }
+    .no-print {
+      display: none;
+    }
+    .page {
+      margin: 0;
+      box-shadow: none;
+    }
+  }
+  
+  .gradient-header {
+    background: linear-gradient(135deg, #2C5282 0%, #1A365D 100%);
+  }
+  
+  .card-shadow {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+</style>
 </head>
-<body>
-    <h1>Ficha de Cliente</h1>
+<body class="py-8 px-4">
+  
+  <!-- PAGE 1: FICHA PRINCIPAL -->
+  <div class="page max-w-5xl mx-auto bg-white rounded-2xl card-shadow overflow-hidden mb-8">
+    <!-- Header -->
+    <div class="gradient-header text-white px-8 py-6">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight">FICHA ANTROPOMÉTRICA</h1>
+          <p class="text-blue-100 mt-1">Evaluación Corporal Integral</p>
+        </div>
+        <div class="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
+          <p class="text-xs uppercase tracking-wider text-blue-100">Fecha de Evaluación</p>
+          <input type="date" class="bg-transparent text-white font-semibold text-lg border-none focus:outline-none" value="2024-10-05">
+        </div>
+      </div>
+    </div>
+
+    <div class="p-8">
+      <!-- Datos Básicos y Silueta -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- Datos Básicos -->
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-user text-[#2C5282]"></i>
+            Datos Generales
+          </h2>
+          <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 border border-blue-100">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white rounded-lg p-4 border border-gray-200">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">Edad</p>
+                <p class="text-2xl font-bold text-[#2C5282]">54 <span class="text-base font-normal text-gray-600">años</span></p>
+              </div>
+              <div class="bg-white rounded-lg p-4 border border-gray-200">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">Estatura</p>
+                <p class="text-2xl font-bold text-[#2C5282]">168 <span class="text-base font-normal text-gray-600">cm</span></p>
+              </div>
+              <div class="bg-white rounded-lg p-4 border border-gray-200">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">Peso</p>
+                <p class="text-2xl font-bold text-[#2C5282]">69.6 <span class="text-base font-normal text-gray-600">kg</span></p>
+              </div>
+              <div class="bg-white rounded-lg p-4 border border-gray-200">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">IMC</p>
+                <p class="text-2xl font-bold text-[#2C5282]" id="imc-display">24.7</p>
+              </div>
+            </div>
+            <div class="mt-4 bg-white rounded-lg p-4 border border-gray-200">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">ICC - Índice Cintura/Cadera</p>
+              <p class="text-2xl font-bold text-[#2C5282]" id="icc-display">0.62</p>
+              <p class="text-xs text-gray-600 mt-1">Rango saludable para mujeres: < 0.85</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Silueta con Medidas -->
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-ruler-combined text-[#2C5282]"></i>
+            Distribución de Medidas
+          </h2>
+          <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 border border-blue-100 relative h-[480px]">
+            <div class="relative w-full h-full flex items-center justify-center">
+              <!-- SVG Silueta Proporcional -->
+              <svg viewBox="0 0 200 450" class="h-full" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cabeza -->
+                <ellipse cx="100" cy="40" rx="28" ry="32" fill="none" stroke="#2C5282" stroke-width="2"/>
+                <!-- Cuello -->
+                <line x1="100" y1="72" x2="100" y2="90" stroke="#2C5282" stroke-width="2"/>
+                <!-- Hombros y Torso -->
+                <path d="M 70 90 L 85 95 L 85 160 L 115 160 L 115 95 L 130 90" fill="none" stroke="#2C5282" stroke-width="2"/>
+                <!-- Cintura -->
+                <path d="M 85 160 L 80 200 L 120 200 L 115 160" fill="none" stroke="#2C5282" stroke-width="2"/>
+                <!-- Cadera -->
+                <path d="M 80 200 L 75 240 L 125 240 L 120 200" fill="none" stroke="#2C5282" stroke-width="2"/>
+                <!-- Brazos -->
+                <path d="M 70 90 L 55 140 L 52 180" fill="none" stroke="#2C5282" stroke-width="2" stroke-linecap="round"/>
+                <path d="M 130 90 L 145 140 L 148 180" fill="none" stroke="#2C5282" stroke-width="2" stroke-linecap="round"/>
+                <!-- Piernas -->
+                <path d="M 85 240 L 80 320 L 78 400" fill="none" stroke="#2C5282" stroke-width="2" stroke-linecap="round"/>
+                <path d="M 115 240 L 120 320 L 122 400" fill="none" stroke="#2C5282" stroke-width="2" stroke-linecap="round"/>
+                <!-- Pies -->
+                <ellipse cx="78" cy="405" rx="12" ry="6" fill="none" stroke="#2C5282" stroke-width="2"/>
+                <ellipse cx="122" cy="405" rx="12" ry="6" fill="none" stroke="#2C5282" stroke-width="2"/>
+              </svg>
+
+              <!-- Badges de Medidas -->
+              <div class="measure-badge" style="top: 18%; left: 75%;">
+                <i class="fa-solid fa-up-down-left-right text-xs"></i>
+                <span>Espalda 48cm</span>
+              </div>
+              
+              <div class="measure-badge" style="top: 30%; left: 5%;">
+                <i class="fa-solid fa-dumbbell text-xs"></i>
+                <span>Bíceps 28cm</span>
+              </div>
+              
+              <div class="measure-badge" style="top: 42%; left: 75%;">
+                <i class="fa-solid fa-arrows-left-right text-xs"></i>
+                <span>Cintura 68cm</span>
+              </div>
+              
+              <div class="measure-badge" style="top: 52%; left: 5%;">
+                <i class="fa-solid fa-arrows-left-right text-xs"></i>
+                <span>Cadera 109cm</span>
+              </div>
+              
+              <div class="measure-badge" style="top: 65%; left: 75%;">
+                <i class="fa-solid fa-person-walking text-xs"></i>
+                <span>Cuádriceps 54cm</span>
+              </div>
+              
+              <div class="measure-badge" style="top: 80%; left: 5%;">
+                <i class="fa-solid fa-circle text-xs"></i>
+                <span>Pantorrilla 34cm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan Inicial -->
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-list text-[#2C5282]"></i>
+          Plan Inicial de Recomposición
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div class="bg-blue-50 border-l-4 border-[#2C5282] rounded-lg p-4">
+              <h3 class="font-semibold text-[#2C5282] mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-bullseye"></i>Objetivo
+              </h3>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• Reducir porcentaje de grasa corporal</li>
+                <li>• Mejorar tono muscular</li>
+                <li>• Mantener y desarrollar masa muscular</li>
+                <li>• Mejorar condición física y salud general</li>
+              </ul>
+            </div>
+
+            <div class="bg-green-50 border-l-4 border-green-600 rounded-lg p-4">
+              <h3 class="font-semibold text-green-700 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-check"></i>Disponibilidad
+              </h3>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• Entrenamiento: 3 a 4 veces por semana</li>
+                <li>• Alimentación: 2 comidas principales y 1 snack</li>
+              </ul>
+            </div>
+
+            <div class="bg-purple-50 border-l-4 border-purple-600 rounded-lg p-4">
+              <h3 class="font-semibold text-purple-700 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-stethoscope"></i>Evaluación Inicial
+              </h3>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• Relación peso-estatura dentro de rangos saludables</li>
+                <li>• Objetivo principal: recomposición corporal, no pérdida importante de peso</li>
+                <li>• A los 54 años priorizar entrenamiento de fuerza para preservar masa muscular y salud ósea</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-orange-50 border-l-4 border-orange-600 rounded-lg p-4">
+              <h3 class="font-semibold text-orange-700 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-fire"></i>Requerimiento Calórico
+              </h3>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• Mantenimiento: 1,850–2,050 kcal/día</li>
+                <li>• Pérdida gradual: 1,600–1,750 kcal/día</li>
+              </ul>
+            </div>
+
+            <div class="bg-teal-50 border-l-4 border-teal-600 rounded-lg p-4">
+              <h3 class="font-semibold text-teal-700 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie"></i>Distribución de Macros
+              </h3>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• <strong>Proteína:</strong> 130–145g diarios</li>
+                <li>• <strong>Grasas:</strong> 50–60g diarios</li>
+                <li>• <strong>Carbohidratos:</strong> 130–170g diarios</li>
+              </ul>
+            </div>
+
+            <div class="bg-pink-50 border-l-4 border-pink-600 rounded-lg p-4">
+              <h3 class="font-semibold text-pink-700 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-pills"></i>Suplementación
+              </h3>
+              <ul class="text-sm text-gray-700 space-y-1">
+                <li>• Creatina: 5g diarios sin carga</li>
+                <li>• Proteína Isolate Gold: 1 scoop post entreno</li>
+                <li>• Colágeno: 20g diarios</li>
+                <li>• Hidratación: 2.5–3L agua/día</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-magnifying-glass-chart text-[#2C5282]"></i>
+          Observaciones y Diagnóstico
+        </h2>
+        <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 border border-blue-100">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold text-[#2C5282] mb-3">Estado Actual</h3>
+              <ul class="text-sm text-gray-700 space-y-2">
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check-circle text-green-600 mt-0.5"></i>
+                  <span>Buena base muscular para 54 años</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check-circle text-green-600 mt-0.5"></i>
+                  <span>No presenta obesidad. Para 69.6kg y 168cm rango razonable</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check-circle text-green-600 mt-0.5"></i>
+                  <span>Piernas proporcionadas con buen desarrollo</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-check-circle text-green-600 mt-0.5"></i>
+                  <span>Postura normal</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold text-[#2C5282] mb-3">Áreas de Atención</h3>
+              <ul class="text-sm text-gray-700 space-y-2">
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-exclamation-circle text-amber-600 mt-0.5"></i>
+                  <span>Mayor acumulación grasa en: Abdomen bajo, flancos/cintura, tríceps, zona de cadera</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-chart-simple text-blue-600 mt-0.5"></i>
+                  <span>Estimación: 28–33% grasa corporal</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-arrows-rotate text-blue-600 mt-0.5"></i>
+                  <span>No sobrepeso importante, necesita recomposición: bajar grasa, ganar músculo, mejorar tono</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-4 bg-white rounded-lg p-4 border border-blue-200">
+            <p class="text-sm text-gray-700">
+              <strong class="text-[#2C5282]">Objetivo realista:</strong> Peso 64–67kg, reducir cintura y abdomen, mantener masa muscular. 
+              <span class="text-amber-700">Si pierde muchos kilos podría verse demasiado delgada.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados Esperados -->
+      <div>
+        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-[#2C5282]"></i>
+          Resultados Esperados
+        </h2>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-5 shadow-lg">
+            <div class="text-3xl font-bold mb-2">8 Semanas</div>
+            <p class="text-sm text-blue-100">Abdomen más plano y brazos firmes</p>
+          </div>
+          <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-xl p-5 shadow-lg">
+            <div class="text-3xl font-bold mb-2">12 Semanas</div>
+            <p class="text-sm text-indigo-100">Reducción visible de grasa corporal</p>
+          </div>
+          <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-5 shadow-lg">
+            <div class="text-3xl font-bold mb-2">4-6 Meses</div>
+            <p class="text-sm text-purple-100">Cambio físico muy notable sin dietas extremas</p>
+          </div>
+        </div>
+        <div class="mt-4 bg-gradient-to-r from-[#2C5282] to-[#1A365D] text-white rounded-xl p-5 text-center">
+          <p class="text-lg font-semibold">
+            <i class="fa-solid fa-heart-pulse mr-2"></i>
+            Para mujer de 54 años: La meta es verse firme, fuerte y saludable, no un peso muy bajo
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: SEGUIMIENTO -->
+  <div class="page max-w-5xl mx-auto bg-white rounded-2xl card-shadow overflow-hidden">
+    <!-- Header -->
+    <div class="gradient-header text-white px-8 py-6">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight">EVALUACIÓN DE MEDIDAS CORPORALES</h1>
+          <p class="text-blue-100 mt-1">Seguimiento cada 4 semanas - 12 Controles</p>
+        </div>
+        <div class="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
+          <i class="fa-solid fa-chart-line text-3xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-8">
+      <!-- Datos del Cliente -->
+      <div class="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
+        <div class="grid grid-cols-4 gap-4">
+          <div>
+            <label class="text-xs text-gray-500 uppercase">Nombre</label>
+            <input type="text" class="input-editable mt-1" placeholder="Ingresar nombre">
+          </div>
+          <div>
+            <label class="text-xs text-gray-500 uppercase">Edad</label>
+            <input type="number" class="input-editable mt-1" value="54" id="edad-control">
+          </div>
+          <div>
+            <label class="text-xs text-gray-500 uppercase">Estatura (cm)</label>
+            <input type="number" class="input-editable mt-1" value="168" id="estatura-control">
+          </div>
+          <div>
+            <label class="text-xs text-gray-500 uppercase">Fecha Inicio</label>
+            <input type="date" class="input-editable mt-1">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Seguimiento -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-[#2C5282] text-white">
+              <th class="p-3 text-left rounded-tl-lg sticky left-0 bg-[#2C5282] z-10">Medida</th>
+              <th class="p-2 text-center">Inicio</th>
+              <th class="p-2 text-center">C1<br><span class="text-xs font-normal">Sem 4</span></th>
+              <th class="p-2 text-center">C2<br><span class="text-xs font-normal">Sem 8</span></th>
+              <th class="p-2 text-center">C3<br><span class="text-xs font-normal">Sem 12</span></th>
+              <th class="p-2 text-center">C4<br><span class="text-xs font-normal">Sem 16</span></th>
+              <th class="p-2 text-center">C5<br><span class="text-xs font-normal">Sem 20</span></th>
+              <th class="p-2 text-center">C6<br><span class="text-xs font-normal">Sem 24</span></th>
+              <th class="p-2 text-center">C7<br><span class="text-xs font-normal">Sem 28</span></th>
+              <th class="p-2 text-center">C8<br><span class="text-xs font-normal">Sem 32</span></th>
+              <th class="p-2 text-center">C9<br><span class="text-xs font-normal">Sem 36</span></th>
+              <th class="p-2 text-center">C10<br><span class="text-xs font-normal">Sem 40</span></th>
+              <th class="p-2 text-center">C11<br><span class="text-xs font-normal">Sem 44</span></th>
+              <th class="p-2 text-center rounded-tr-lg">C12<br><span class="text-xs font-normal">Sem 48</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Peso -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Peso (kg)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="69.6" id="peso-0"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-1"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-2"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-3"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-4"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-5"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-6"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-7"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-8"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-9"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-10"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-11"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="peso-12"></td>
+            </tr>
+            
+            <!-- IMC - Auto -->
+            <tr class="border-b border-gray-200 bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-blue-50">IMC</td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-0" value="24.7"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-1"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-2"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-3"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-4"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-5"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-6"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-7"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-8"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-9"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-10"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-11"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="imc-12"></td>
+            </tr>
+
+            <!-- Bíceps -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Bíceps (cm)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="28"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+            </tr>
+
+            <!-- Cintura -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Cintura (cm)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="68" id="cintura-0"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-1"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-2"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-3"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-4"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-5"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-6"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-7"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-8"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-9"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-10"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-11"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cintura-12"></td>
+            </tr>
+
+            <!-- Cadera -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Cadera (cm)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="109" id="cadera-0"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-1"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-2"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-3"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-4"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-5"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-6"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-7"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-8"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-9"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-10"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-11"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" id="cadera-12"></td>
+            </tr>
+
+            <!-- ICC - Auto -->
+            <tr class="border-b border-gray-200 bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-blue-50">ICC</td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-0" value="0.62"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-1"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-2"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-3"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-4"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-5"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-6"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-7"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-8"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-9"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-10"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-11"></td>
+              <td class="p-1"><input type="text" class="input-editable bg-blue-100" readonly id="icc-12"></td>
+            </tr>
+
+            <!-- Espalda -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Espalda (cm)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="48"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+            </tr>
+
+            <!-- Cuádriceps -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Cuádriceps (cm)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="54"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+            </tr>
+
+            <!-- Pantorrilla -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">Pantorrilla (cm)</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" value="34"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+            </tr>
+
+            <!-- % Grasa Est. -->
+            <tr class="border-b border-gray-200 hover:bg-blue-50">
+              <td class="p-2 font-semibold text-gray-700 sticky left-0 bg-white">% Grasa Est.</td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable" placeholder="30" value="30"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+              <td class="p-1"><input type="number" step="0.1" class="input-editable"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Notas y Observaciones -->
+      <div class="mt-6 grid md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-notes-medical text-[#2C5282]"></i>
+            Notas de Seguimiento
+          </h3>
+          <textarea class="w-full h-32 input-editable text-left p-3" placeholder="Anotaciones sobre progreso, cambios en rutina, adherencia al plan..."></textarea>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-[#2C5282]"></i>
+            Referencias Saludables
+          </h3>
+          <div class="bg-blue-50 rounded-lg p-4 text-sm text-gray-700 space-y-2">
+            <p><strong>IMC Mujer:</strong> 18.5-24.9 Normal | 25-29.9 Sobrepeso</p>
+            <p><strong>ICC Mujer:</strong> < 0.85 Bajo riesgo cardiovascular</p>
+            <p><strong>Cintura Mujer:</strong> < 88cm Riesgo bajo | > 88cm Riesgo alto</p>
+            <p><strong>% Grasa Mujer 50+:</strong> 23-33% Rango saludable</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-8 pt-6 border-t border-gray-200 flex justify-between items-center text-sm text-gray-600">
+        <div>
+          <p class="font-semibold">Profesional a cargo:</p>
+          <div class="mt-2 border-b-2 border-gray-400 w-64 h-8"></div>
+        </div>
+        <div class="text-right">
+          <p class="font-semibold">Firma del Cliente:</p>
+          <div class="mt-2 border-b-2 border-gray-400 w-64 h-8"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón Imprimir -->
+  <div class="no-print max-w-5xl mx-auto mt-6 text-center">
+    <button onclick="window.print()" class="bg-white text-[#2C5282] px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105">
+      <i class="fa-solid fa-print mr-2"></i>Imprimir Ficha
+    </button>
+  </div>
+
+<script>
+  // Cálculo automático de IMC y ICC
+  function calcularIMC(peso, estatura) {
+    if (!peso || !estatura) return '';
+    const estaturaM = estatura / 100;
+    const imc = peso / (estaturaM * estaturaM);
+    return imc.toFixed(1);
+  }
+
+  function calcularICC(cintura, cadera) {
+    if (!cintura || !cadera) return '';
+    const icc = cintura / cadera;
+    return icc.toFixed(2);
+  }
+
+  function actualizarHoja1() {
+    const imc = calcularIMC(69.6, 168);
+    const icc = calcularICC(68, 109);
+    document.getElementById('imc-display').textContent = imc;
+    document.getElementById('icc-display').textContent = icc;
+  }
+
+  function actualizarControles() {
+    const estatura = parseFloat(document.getElementById('estatura-control').value);
+    
+    for (let i = 0; i <= 12; i++) {
+      const pesoInput = document.getElementById(`peso-${i}`);
+      const cinturaInput = document.getElementById(`cintura-${i}`);
+      const caderaInput = document.getElementById(`cadera-${i}`);
+      const imcInput = document.getElementById(`imc-${i}`);
+      const iccInput = document.getElementById(`icc-${i}`);
+      
+      if (pesoInput && pesoInput.value) {
+        const peso = parseFloat(pesoInput.value);
+        imcInput.value = calcularIMC(peso, estatura);
+      }
+      
+      if (cinturaInput && caderaInput && cinturaInput.value && caderaInput.value) {
+        const cintura = parseFloat(cinturaInput.value);
+        const cadera = parseFloat(caderaInput.value);
+        iccInput.value = calcularICC(cintura, cadera);
+      }
+    }
+  }
+
+  // Event listeners para actualización automática
+  document.addEventListener('DOMContentLoaded', function() {
+    actualizarHoja1();
+    
+    // Escuchar cambios en todos los inputs de peso, cintura y cadera
+    for (let i = 0; i <= 12; i++) {
+      ['peso', 'cintura', 'cadera'].forEach(tipo => {
+        const input = document.getElementById(`${tipo}-${i}`);
+        if (input) {
+          input.addEventListener('input', actualizarControles);
+        }
+      });
+    }
+    
+    document.getElementById('estatura-control').addEventListener('input', actualizarControles);
+    actualizarControles();
+  });
+</script>
+
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
 </body>
 </html>
